@@ -1,4 +1,4 @@
-import os, subprocess
+import os, subprocess, traceback
 
 LOCKFILE_PATH = "/tmp/debug_cron_server.lock"
 SOCKET_IN_PATH = "/tmp/debug_cron.in"
@@ -10,6 +10,12 @@ def main():
         return
     while 1:
         process_command()
+
+def log(log_msg):
+    print log_msg
+    f = open(LOG_PATH, "a")
+    f.write(log_msg + "\n")
+    f.close()
 
 def process_command():
     insock = open(SOCKET_IN_PATH, "r")
@@ -26,10 +32,7 @@ def set_up():
             "Alread running, maybe try again in a minute."
             " If there was a horrible crash, maybe delete the lock file at %s" % LOCKFILE_PATH
         )
-        print error_msg
-        f = open(LOG_PATH, "a")
-        f.write(error_msg + "\n")
-        f.close()
+        log(error_msg)
         return False
 
     for path in [SOCKET_IN_PATH, SOCKET_OUT_PATH]:
@@ -42,5 +45,12 @@ def clean_up():
 
 if __name__ == "__main__":
     if set_up():
-        process_command()
+        try:
+            process_command()
+        except BaseException as e:
+            # Particularly useful for keyboard
+            clean_up()
+            log("Exception:")
+            log(traceback.format_exc())
+            raise
         clean_up()
