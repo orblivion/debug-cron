@@ -32,7 +32,7 @@ def process_command():
 
 def set_up():
     # A crude lock. There are nice lockfile libraries, but we don't want
-    # to deal with pip environment under cron.
+    # to deal with virtualenv under cron.
     try:
         os.mkfifo(debug_cron_common.LOCKFILE_PATH)
     except os.error:
