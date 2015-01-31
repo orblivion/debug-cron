@@ -18,6 +18,7 @@ def log(log_msg):
     f.close()
 
 def process_command():
+    log("Starting")
     insock = open(SOCKET_IN_PATH, "r")
     outsock = open(SOCKET_OUT_PATH, "w")
     subprocess.call("sh", stdout=outsock, stderr=outsock, stdin=insock)
@@ -28,11 +29,10 @@ def set_up():
     try:
         os.mkfifo(LOCKFILE_PATH)
     except os.error:
-        error_msg = (
-            "Alread running, maybe try again in a minute."
-            " If there was a horrible crash, maybe delete the lock file at %s" % LOCKFILE_PATH
+        msg = (
+            "Already running. Likely from a previous cron run. If not, try cleaning up files."
         )
-        log(error_msg)
+        log(msg)
         return False
 
     for path in [SOCKET_IN_PATH, SOCKET_OUT_PATH]:
@@ -40,6 +40,7 @@ def set_up():
     return True
 
 def clean_up():
+    log("Cleaning Up")
     for path in [SOCKET_IN_PATH, SOCKET_OUT_PATH, LOCKFILE_PATH]:
         os.remove(path)
 
