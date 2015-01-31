@@ -2,10 +2,19 @@ import os, subprocess, traceback
 import debug_cron_common
 
 def main():
-    if not set_up():
-        return
-    while 1:
-        process_command()
+    if set_up():
+        try:
+            while not quit_signal():
+                process_command()
+        except BaseException:
+            # Particularly useful for keyboard
+            clean_up()
+            log("Exception:")
+            log(traceback.format_exc())
+            raise
+        else:
+            log("Normal Exit")
+            clean_up()
 
 def log(log_msg):
     print log_msg
@@ -47,16 +56,4 @@ def clean_up():
         os.remove(path)
 
 if __name__ == "__main__":
-    if set_up():
-        try:
-            while not quit_signal():
-                process_command()
-        except BaseException as e:
-            # Particularly useful for keyboard
-            clean_up()
-            log("Exception:")
-            log(traceback.format_exc())
-            raise
-        else:
-            log("Normal Exit")
-            clean_up()
+    main()
