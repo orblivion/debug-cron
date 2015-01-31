@@ -1,0 +1,5 @@
+LOCKFILE_PATH = "/tmp/debug_cron_server.lock"
+SOCKET_IN_PATH = "/tmp/debug_cron.in"
+SOCKET_OUT_PATH = "/tmp/debug_cron.out"
+QUIT_SIGNAL_PATH = "/tmp/debug_cron_server.quit"
+LOG_PATH = "/tmp/debug_cron_server.log"

@@ -1,10 +1,5 @@
 import os, subprocess, traceback
-
-LOCKFILE_PATH = "/tmp/debug_cron_server.lock"
-SOCKET_IN_PATH = "/tmp/debug_cron.in"
-SOCKET_OUT_PATH = "/tmp/debug_cron.out"
-QUIT_SIGNAL_PATH = "/tmp/debug_cron_server.quit"
-LOG_PATH = "/tmp/debug_cron_server.log"
+import debug_cron_common
 
 def main():
     if not set_up():
@@ -14,24 +9,24 @@ def main():
 
 def log(log_msg):
     print log_msg
-    f = open(LOG_PATH, "a")
+    f = open(debug_cron_common.LOG_PATH, "a")
     f.write(log_msg + "\n")
     f.close()
 
 def quit_signal():
-    return os.path.exists(QUIT_SIGNAL_PATH)
+    return os.path.exists(debug_cron_common.QUIT_SIGNAL_PATH)
 
 def process_command():
     log("Listening for command")
-    insock = open(SOCKET_IN_PATH, "r")
-    outsock = open(SOCKET_OUT_PATH, "w")
+    insock = open(debug_cron_common.SOCKET_IN_PATH, "r")
+    outsock = open(debug_cron_common.SOCKET_OUT_PATH, "w")
     subprocess.call("sh", stdout=outsock, stderr=outsock, stdin=insock)
 
 def set_up():
     # A crude lock. There are nice lockfile libraries, but we don't want
     # to deal with pip environment under cron.
     try:
-        os.mkfifo(LOCKFILE_PATH)
+        os.mkfifo(debug_cron_common.LOCKFILE_PATH)
     except os.error:
         msg = (
             "Already running. Likely from a previous cron run. If not, try cleaning up files."
@@ -39,13 +34,16 @@ def set_up():
         log(msg)
         return False
 
-    for path in [SOCKET_IN_PATH, SOCKET_OUT_PATH]:
+    for path in [debug_cron_common.SOCKET_IN_PATH, debug_cron_common.SOCKET_OUT_PATH]:
         os.mkfifo(path, 0600)
     return True
 
 def clean_up():
     log("Cleaning Up")
-    for path in [SOCKET_IN_PATH, SOCKET_OUT_PATH, QUIT_SIGNAL_PATH, LOCKFILE_PATH]:
+    for path in [debug_cron_common.SOCKET_IN_PATH,
+                 debug_cron_common.SOCKET_OUT_PATH,
+                 debug_cron_common.QUIT_SIGNAL_PATH,
+                 debug_cron_common.LOCKFILE_PATH]:
         os.remove(path)
 
 if __name__ == "__main__":
