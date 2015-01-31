@@ -3,7 +3,7 @@ import os, subprocess
 LOCKFILE_PATH = "/tmp/debug_cron_server.lock"
 SOCKET_IN_PATH = "/tmp/debug_cron.in"
 SOCKET_OUT_PATH = "/tmp/debug_cron.out"
-LOG_PATH = "/tmp/debug_cron.log"
+LOG_PATH = "/tmp/debug_cron_server.log"
 
 def main():
     if not set_up():
