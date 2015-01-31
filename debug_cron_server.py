@@ -3,6 +3,7 @@ import os, subprocess, traceback
 LOCKFILE_PATH = "/tmp/debug_cron_server.lock"
 SOCKET_IN_PATH = "/tmp/debug_cron.in"
 SOCKET_OUT_PATH = "/tmp/debug_cron.out"
+QUIT_SIGNAL_PATH = "/tmp/debug_cron_server.quit"
 LOG_PATH = "/tmp/debug_cron_server.log"
 
 def main():
@@ -17,8 +18,11 @@ def log(log_msg):
     f.write(log_msg + "\n")
     f.close()
 
+def quit_signal():
+    return os.path.exists(QUIT_SIGNAL_PATH)
+
 def process_command():
-    log("Starting")
+    log("Listening for command")
     insock = open(SOCKET_IN_PATH, "r")
     outsock = open(SOCKET_OUT_PATH, "w")
     subprocess.call("sh", stdout=outsock, stderr=outsock, stdin=insock)
@@ -41,17 +45,20 @@ def set_up():
 
 def clean_up():
     log("Cleaning Up")
-    for path in [SOCKET_IN_PATH, SOCKET_OUT_PATH, LOCKFILE_PATH]:
+    for path in [SOCKET_IN_PATH, SOCKET_OUT_PATH, QUIT_SIGNAL_PATH, LOCKFILE_PATH]:
         os.remove(path)
 
 if __name__ == "__main__":
     if set_up():
         try:
-            process_command()
+            while not quit_signal():
+                process_command()
         except BaseException as e:
             # Particularly useful for keyboard
             clean_up()
             log("Exception:")
             log(traceback.format_exc())
             raise
-        clean_up()
+        else:
+            log("Normal Exit")
+            clean_up()
