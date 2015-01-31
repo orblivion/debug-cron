@@ -1,20 +1,19 @@
-import os, subprocess, traceback
+import os, subprocess, traceback, atexit
 import debug_cron_common
 
 def main():
     if set_up():
+        atexit.register(clean_up)
         try:
             while not quit_signal():
                 process_command()
         except BaseException:
             # Particularly useful for keyboard
-            clean_up()
             log("Exception:")
             log(traceback.format_exc())
             raise
         else:
             log("Normal Exit")
-            clean_up()
 
 def log(log_msg):
     print log_msg
@@ -53,7 +52,8 @@ def clean_up():
                  debug_cron_common.SOCKET_OUT_PATH,
                  debug_cron_common.QUIT_SIGNAL_PATH,
                  debug_cron_common.LOCKFILE_PATH]:
-        os.remove(path)
+        if os.path.exists(path):
+            os.remove(path)
 
 if __name__ == "__main__":
     main()
