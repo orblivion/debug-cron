@@ -3,6 +3,7 @@ import os, subprocess
 LOCKFILE_PATH = "/tmp/debug_cron_server.lock"
 SOCKET_IN_PATH = "/tmp/debug_cron.in"
 SOCKET_OUT_PATH = "/tmp/debug_cron.out"
+LOG_PATH = "/tmp/debug_cron.log"
 
 def main():
     if not set_up():
@@ -21,10 +22,14 @@ def set_up():
     try:
         os.mkfifo(LOCKFILE_PATH)
     except os.error:
-        print (
+        error_msg = (
             "Alread running, maybe try again in a minute."
             " If there was a horrible crash, maybe delete the lock file at %s" % LOCKFILE_PATH
         )
+        print error_msg
+        f = open(LOG_PATH, "a")
+        f.write(error_msg + "\n")
+        f.close()
         return False
 
     for path in [SOCKET_IN_PATH, SOCKET_OUT_PATH]:
@@ -34,3 +39,8 @@ def set_up():
 def clean_up():
     for path in [SOCKET_IN_PATH, SOCKET_OUT_PATH, LOCKFILE_PATH]:
         os.remove(path)
+
+if __name__ == "__main__":
+    if set_up():
+        process_command()
+        clean_up()
