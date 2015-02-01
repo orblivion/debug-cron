@@ -7,9 +7,11 @@ def get_working_path():
 def confirm_dir(path):
     dir_stat = os.stat(path)
     if dir_stat.st_mode != 040700:
-        return False, "Wrong working directory permissions. Got: %s" % dir_stat.st_mode
+        return False, "Wrong working directory permissions. Got: %s" % oct(dir_stat.st_mode)
     if dir_stat.st_uid != os.getuid():
         return False, "Wrong working directory owner uid. Got: %s" % dir_stat.st_uid
+    if dir_stat.st_gid != os.getgid():
+        return False, "Wrong working directory owner gid. Got: %s" % dir_stat.st_gid
     return True, None
 
 def set_up_dir():

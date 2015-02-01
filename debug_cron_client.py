@@ -49,7 +49,10 @@ def wait_until_running():
     return False
 
 def main():
-    debug_cron_common.set_up_dir()
+    success, error_msg = debug_cron_common.set_up_dir()
+    if not success:
+        print error_msg
+        return
 
     cron_command = get_command(sys.argv)
 
