@@ -1,4 +1,4 @@
-import os, subprocess, traceback, atexit
+import os, subprocess, traceback, atexit, time, calendar
 import debug_cron_common
 
 def main():
@@ -17,7 +17,13 @@ def main():
 def log(log_msg):
     print log_msg
     f = open(debug_cron_common.LOG_PATH, "a")
-    f.write(log_msg + "\n")
+    timestamp = calendar.timegm(time.gmtime())
+    if len(log_msg.split("\n")) > 1:
+        # multi line
+        f.write("{timestamp}:\n{log_msg}".format(timestamp=timestamp, log_msg=log_msg) + "\n")
+    else:
+        # one line
+        f.write("{timestamp}: {log_msg}".format(timestamp=timestamp, log_msg=log_msg) + "\n")
     f.close()
 
 def quit_signal():
