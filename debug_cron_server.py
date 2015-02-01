@@ -55,8 +55,8 @@ def set_up():
     atexit.register(clean_up)
 
     # in case things already exist, wipe them out
-    clean_up() 
     for path in [debug_cron_common.get_socket_in_path(), debug_cron_common.get_socket_out_path()]:
+        os.remove(path)
         os.mkfifo(path, 0600)
     return True
 
