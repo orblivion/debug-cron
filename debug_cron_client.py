@@ -1,3 +1,4 @@
+#!/usr/bin/python
 import sys, os, time
 import debug_cron_common
 
@@ -62,7 +63,7 @@ def main():
 
     signal_run()
 
-    if cron_command == "quit":
+    if cron_command == "--quit":
         signal_quit()
         time.sleep(.2) # mitigate race conditions
         if is_running(): 

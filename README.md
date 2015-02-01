@@ -16,7 +16,7 @@ So, here's a hacked up way to do it more conveniently:
 
     sudo ./install.sh
 
-This just creates the directory in /var/ for us use for communicating between the processes.
+This just creates the directories in /var/ for us use for communicating between the processes.
 
 ## Use
 
@@ -28,10 +28,67 @@ Now wait until the next minute comes along. Yes this command will repeat every m
 
 Now from within the package directory run:
 
-    python debug_cron_client.py ls /tmp/somefile
+    ./debug_cron_client.py ls /
 
-You should get the output as cron sees it. Here, try this:
+Initially, the cron job probably won't have kicked in:
 
-    python debug_cron_client.py env
+    Waiting for server (may take up to a minute)...
 
-Now you'll see what's really going on. `stdout` and `stderr` should now come out here.
+Once it does, you should get the output as cron sees it:
+
+    bin
+    boot
+    cdrom
+    dev
+    etc
+    home
+    initrd.img
+    initrd.img.old
+    lib
+    lib64
+    lost+found
+    media
+    mnt
+    opt
+    proc
+    root
+    run
+    sbin
+    srv
+    sys
+    tmp
+    usr
+    var
+    vmlinuz
+    vmlinuz.old
+
+Now that it's started, subsequent commands should go through right away. Here, try this:
+
+    ./debug_cron_client.py env
+
+You'll see the elusive cron env that's giving us all this grief:
+
+    HOME=/home/keyboard_kowboy
+    LOGNAME=keyboard_kowboy
+    PATH=/usr/bin:/bin
+    LANG=en_US.UTF-8
+    SHELL=/bin/sh
+    PWD=/home/keyboard_kowboy
+
+So now you'll see what's really going on. Both `stdout` and `stderr` should now come out here, for now both as stdout.
+
+Since the thing is running in cron land, you may want to stop it:
+
+    ./debug_cron_client.py --quit
+
+This will tell it to stop listening for new commands. If you run the client again with a normal command, it will have to wait for cron to kick it off on the next minute mark, like it did the first time you ran it. This way you can conceivably leave it in your cron and it won't be waiting around, or really do anything when you don't need it. Just make sure to remember to run with `--quit` when you're done, even if you remove it from cron, otherwise it'll be hanging around listening. I know this is a bit inelegant, I'm open to better ideas.
+
+## Annoying things
+
+If you use a shell variable, you have to escape the `$`
+
+    ./debug_cron_client.py echo \$PWD
+
+If you need to change your directory first, you should put that in quotes:
+
+    ./debug_cron_client.py "(cd /tmp/; ls)"
