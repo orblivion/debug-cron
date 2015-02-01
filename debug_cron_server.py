@@ -3,7 +3,6 @@ import debug_cron_common
 
 def main():
     if set_up():
-        atexit.register(clean_up)
         try:
             while not quit_signal():
                 process_command()
@@ -22,7 +21,7 @@ def log(log_msg):
     f.close()
 
 def quit_signal():
-    return os.path.exists(debug_cron_common.QUIT_SIGNAL_PATH)
+    return not os.path.exists(debug_cron_common.RUN_SIGNAL_PATH)
 
 def process_command():
     log("Listening for command")
@@ -42,6 +41,8 @@ def set_up():
         log(msg)
         return False
 
+    atexit.register(clean_up)
+
     for path in [debug_cron_common.SOCKET_IN_PATH, debug_cron_common.SOCKET_OUT_PATH]:
         os.mkfifo(path, 0600)
     return True
@@ -50,7 +51,6 @@ def clean_up():
     log("Cleaning Up")
     for path in [debug_cron_common.SOCKET_IN_PATH,
                  debug_cron_common.SOCKET_OUT_PATH,
-                 debug_cron_common.QUIT_SIGNAL_PATH,
                  debug_cron_common.LOCKFILE_PATH]:
         if os.path.exists(path):
             os.remove(path)

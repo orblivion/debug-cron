@@ -1,4 +1,4 @@
-import sys, os
+import sys, os, time
 import debug_cron_common
 
 def get_command(args):
@@ -16,16 +16,41 @@ def print_output():
         print out_f.read()
 
 def signal_quit():
-    os.mkfifo(debug_cron_common.QUIT_SIGNAL_PATH)
+    os.remove(debug_cron_common.RUN_SIGNAL_PATH)
 
-if __name__ == "__main__":
+def signal_run():
+    if not os.path.exists(debug_cron_common.RUN_SIGNAL_PATH):
+        os.mkfifo(debug_cron_common.RUN_SIGNAL_PATH)
+
+def wait_until_running():
+    if not os.path.exists(debug_cron_common.LOCKFILE_PATH):
+        print "Waiting for server..."
+    else:
+        return
+    for x in range(61):
+        time.sleep(1)
+        if os.path.exists(debug_cron_common.LOCKFILE_PATH):
+            print "Server found. Running command."
+            print
+            return True
+    else:
+        print "Server not found. Doublecheck that it's set up correctly in cron. Exiting client."
+
+def main():
+    signal_run()
     cron_command = get_command(sys.argv)
 
     if not cron_command:
         print "Please give a command"
-    elif cron_command == "quit":
+        return
+
+    wait_until_running()
+    if cron_command == "quit":
         signal_quit()
         dispatch_command("ls") # something to get it to read from the fifo
     else:
         dispatch_command(cron_command)
         print_output()
+
+if __name__ == "__main__":
+    main()
