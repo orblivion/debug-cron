@@ -51,6 +51,9 @@ def set_up():
             "Already running. Likely from a previous cron run. If not, try cleaning up files."
         )
         return False
+    else:
+        with open(debug_cron_common.get_serverpidfile_path(), "w") as pid_file:
+            pid_file.write(str(os.getpid()))
 
     atexit.register(clean_up)
 
@@ -65,6 +68,7 @@ def clean_up():
     log("Cleaning Up")
     for path in [debug_cron_common.get_socket_in_path(),
                  debug_cron_common.get_socket_out_path(),
+                 debug_cron_common.get_serverpidfile_path(),
                  debug_cron_common.get_lockfile_path()]:
         if os.path.exists(path):
             os.remove(path)

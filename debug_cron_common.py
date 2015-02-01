@@ -24,6 +24,7 @@ def get_path_for_file(fname):
     return os.path.join(get_working_path(), fname)
 
 get_lockfile_path = lambda : get_path_for_file("debug_cron_server.lock")
+get_serverpidfile_path = lambda : get_path_for_file("debug_cron_server.pid")
 get_socket_in_path = lambda : get_path_for_file("debug_cron.in")
 get_socket_out_path = lambda : get_path_for_file("debug_cron.out")
 get_run_signal_path = lambda : get_path_for_file("debug_cron_server.runsignal")
