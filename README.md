@@ -2,7 +2,7 @@
 
 This **HAS NOT** been carefully vetted or tested, including for security concerns (particularly with other users injecting commands). Use at your own risk.
 
-Requires (and should only be relevant for) a Unix environment. To the extent it has been tested, it was tested on Ubuntu Utropic.
+Requires (and should only be relevant for) a Unix environment. To the extent it has been tested, it was tested on Ubuntu Utropic and Trusty.
 
 Please see [Issues](https://github.com/orblivion/debug-cron/issues/) if you want to help review or fix or report bugs.
 
