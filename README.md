@@ -2,7 +2,7 @@
 
 This **HAS NOT** been carefully vetted or tested, including for security concerns (particularly with other users injecting commands). Use at your own risk.
 
-To the extent it has been tested, it was tested on Ubuntu Utropic.
+Requires (and should only be relevant for) a Unix environment. To the extent it has been tested, it was tested on Ubuntu Utropic.
 
 # Why
 
