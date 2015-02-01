@@ -28,14 +28,17 @@ def signal_run():
     if not os.path.exists(debug_cron_common.get_run_signal_path()):
         os.mkfifo(debug_cron_common.get_run_signal_path())
 
+def is_running():
+    return os.path.exists(debug_cron_common.get_lockfile_path())
+
 def wait_until_running():
-    if not os.path.exists(debug_cron_common.get_lockfile_path()):
+    if not is_running():
         print "Waiting for server (may take up to a minute)..."
     else:
         return
     for x in range(61):
         time.sleep(1)
-        if os.path.exists(debug_cron_common.get_lockfile_path()):
+        if is_running():
             print "Server found. Running command."
             print
             return True
@@ -53,8 +56,10 @@ def main():
 
     if cron_command == "quit":
         signal_quit()
-        dispatch_command("ls") # something to get it to read from the fifo
-        flush_output()
+        time.sleep(.2) # mitigate race conditions
+        if is_running(): 
+            dispatch_command("ls") # something to get it to read from the fifo
+            flush_output() # necessary to get it to process the above command
         return
 
     wait_until_running()
