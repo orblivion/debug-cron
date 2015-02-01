@@ -47,10 +47,9 @@ def set_up():
     try:
         os.mkfifo(debug_cron_common.get_lockfile_path())
     except os.error:
-        msg = (
+        log(
             "Already running. Likely from a previous cron run. If not, try cleaning up files."
         )
-        log(msg)
         return False
 
     atexit.register(clean_up)
