@@ -32,10 +32,11 @@ def is_running():
     return os.path.exists(debug_cron_common.get_lockfile_path())
 
 def wait_until_running():
-    if not is_running():
-        print "Waiting for server (may take up to a minute)..."
+    if is_running():
+        return True
     else:
-        return
+        print "Waiting for server (may take up to a minute)..."
+
     for x in range(61):
         time.sleep(1)
         if is_running():
@@ -44,6 +45,8 @@ def wait_until_running():
             return True
     else:
         print "Server not found. Doublecheck that it's set up correctly in cron. Exiting client."
+
+    return False
 
 def main():
     cron_command = get_command(sys.argv)
@@ -62,9 +65,9 @@ def main():
             flush_output() # necessary to get it to process the above command
         return
 
-    wait_until_running()
-    dispatch_command(cron_command)
-    print_output()
+    if wait_until_running():
+        dispatch_command(cron_command)
+        print_output()
 
 if __name__ == "__main__":
     main()
