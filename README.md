@@ -4,6 +4,8 @@ This **HAS NOT** been carefully vetted or tested, including for security concern
 
 Requires (and should only be relevant for) a Unix environment. To the extent it has been tested, it was tested on Ubuntu Utropic.
 
+Please see [Issues](https://github.com/orblivion/debug-cron/issues/) if you want to help review or fix or report bugs.
+
 # Why
 
 There's no reason I should be writing this package, but there's *still* no reasonable way to test commands under cron. There's always some nonsense in the environment, you have to have it pipe stdout to a file and wait around for another minute like an idiot. And of course nothing happens for no apparent reason, so you try piping stderr...
