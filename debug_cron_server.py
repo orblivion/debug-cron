@@ -56,7 +56,8 @@ def set_up():
 
     # in case things already exist, wipe them out
     for path in [debug_cron_common.get_socket_in_path(), debug_cron_common.get_socket_out_path()]:
-        os.remove(path)
+        if os.path.exists(path):
+            os.remove(path)
         os.mkfifo(path, 0600)
     return True
 
