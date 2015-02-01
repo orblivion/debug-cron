@@ -30,7 +30,7 @@ def signal_run():
 
 def wait_until_running():
     if not os.path.exists(debug_cron_common.LOCKFILE_PATH):
-        print "Waiting for server..."
+        print "Waiting for server (may take up to a minute)..."
     else:
         return
     for x in range(61):
