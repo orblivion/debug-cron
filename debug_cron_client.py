@@ -1,5 +1,5 @@
 #!/usr/bin/python
-import sys, os, time
+import sys, os, time, subprocess
 import debug_cron_common
 
 def get_command(args):
@@ -13,8 +13,7 @@ def dispatch_command(command):
 def print_output():
     # TODO Output is more complicated, since it's hard to say when it's done.
     # May need signals and locks, and this: http://stackoverflow.com/a/12523302/475877
-    with open(debug_cron_common.get_socket_out_path(), 'r') as out_f:
-        print out_f.read()
+    subprocess.call(["cat", debug_cron_common.get_socket_out_path()])
 
 def flush_output():
     # TODO Output is more complicated, since it's hard to say when it's done.
