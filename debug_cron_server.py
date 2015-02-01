@@ -16,7 +16,7 @@ def main():
 
 def log(log_msg):
     print log_msg
-    f = open(debug_cron_common.LOG_PATH, "a")
+    f = open(debug_cron_common.get_log_path(), "a")
     timestamp = calendar.timegm(time.gmtime())
     if len(log_msg.split("\n")) > 1:
         # multi line
@@ -27,19 +27,19 @@ def log(log_msg):
     f.close()
 
 def quit_signal():
-    return not os.path.exists(debug_cron_common.RUN_SIGNAL_PATH)
+    return not os.path.exists(debug_cron_common.get_run_signal_path())
 
 def process_command():
     log("Listening for command")
-    insock = open(debug_cron_common.SOCKET_IN_PATH, "r")
-    outsock = open(debug_cron_common.SOCKET_OUT_PATH, "w")
+    insock = open(debug_cron_common.get_socket_in_path(), "r")
+    outsock = open(debug_cron_common.get_socket_out_path(), "w")
     subprocess.call("sh", stdout=outsock, stderr=outsock, stdin=insock)
 
 def set_up():
     # A crude lock. There are nice lockfile libraries, but we don't want
     # to deal with virtualenv under cron.
     try:
-        os.mkfifo(debug_cron_common.LOCKFILE_PATH)
+        os.mkfifo(debug_cron_common.get_lockfile_path())
     except os.error:
         msg = (
             "Already running. Likely from a previous cron run. If not, try cleaning up files."
@@ -49,15 +49,15 @@ def set_up():
 
     atexit.register(clean_up)
 
-    for path in [debug_cron_common.SOCKET_IN_PATH, debug_cron_common.SOCKET_OUT_PATH]:
+    for path in [debug_cron_common.get_socket_in_path(), debug_cron_common.get_socket_out_path()]:
         os.mkfifo(path, 0600)
     return True
 
 def clean_up():
     log("Cleaning Up")
-    for path in [debug_cron_common.SOCKET_IN_PATH,
-                 debug_cron_common.SOCKET_OUT_PATH,
-                 debug_cron_common.LOCKFILE_PATH]:
+    for path in [debug_cron_common.get_socket_in_path(),
+                 debug_cron_common.get_socket_out_path(),
+                 debug_cron_common.get_lockfile_path()]:
         if os.path.exists(path):
             os.remove(path)
 
