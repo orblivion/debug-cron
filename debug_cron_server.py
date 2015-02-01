@@ -36,6 +36,8 @@ def process_command():
     subprocess.call("sh", stdout=outsock, stderr=outsock, stdin=insock)
 
 def set_up():
+    debug_cron_common.set_up_dir()
+
     # A crude lock. There are nice lockfile libraries, but we don't want
     # to deal with virtualenv under cron.
     try:

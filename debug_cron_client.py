@@ -49,6 +49,8 @@ def wait_until_running():
     return False
 
 def main():
+    debug_cron_common.set_up_dir()
+
     cron_command = get_command(sys.argv)
 
     if not cron_command:
