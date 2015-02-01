@@ -15,6 +15,12 @@ def print_output():
     with open(debug_cron_common.SOCKET_OUT_PATH, 'r') as out_f:
         print out_f.read()
 
+def flush_output():
+    # TODO Output is more complicated, since it's hard to say when it's done.
+    # May need signals and locks, and this: http://stackoverflow.com/a/12523302/475877
+    with open(debug_cron_common.SOCKET_OUT_PATH, 'r') as out_f:
+        out_f.read()
+
 def signal_quit():
     os.remove(debug_cron_common.RUN_SIGNAL_PATH)
 
@@ -48,6 +54,7 @@ def main():
     if cron_command == "quit":
         signal_quit()
         dispatch_command("ls") # something to get it to read from the fifo
+        flush_output()
     else:
         dispatch_command(cron_command)
         print_output()
