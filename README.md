@@ -94,3 +94,5 @@ If you use a shell variable, you have to escape the `$`
 If you need to change your directory first, you should put that in quotes:
 
     ./debug_cron_client.py "(cd /tmp/; ls)"
+
+If you kill the client, whatever you ran will still be running on the server. To kill the server, find its pid by checking out the .pid file in the working directory (should be `/var/debug_cron/users/<your_uid>`)
