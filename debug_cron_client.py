@@ -43,21 +43,23 @@ def wait_until_running():
         print "Server not found. Doublecheck that it's set up correctly in cron. Exiting client."
 
 def main():
-    signal_run()
     cron_command = get_command(sys.argv)
 
     if not cron_command:
         print "Please give a command"
         return
 
-    wait_until_running()
+    signal_run()
+
     if cron_command == "quit":
         signal_quit()
         dispatch_command("ls") # something to get it to read from the fifo
         flush_output()
-    else:
-        dispatch_command(cron_command)
-        print_output()
+        return
+
+    wait_until_running()
+    dispatch_command(cron_command)
+    print_output()
 
 if __name__ == "__main__":
     main()
