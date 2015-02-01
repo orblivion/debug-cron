@@ -15,7 +15,7 @@ def confirm_dir(path):
 def set_up_dir():
     path = get_working_path()
     if not os.path.exists(path):
-        os.makedirs(path, 0700)
+        os.mkdir(path, 0700)
     return confirm_dir(path)
 
 def get_path_for_file(fname):
