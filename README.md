@@ -12,6 +12,14 @@ So, here's a hacked up way to do it more conveniently:
 
 # How To
 
+## Install
+
+    sudo ./install.sh
+
+This just creates the directory in /var/ for us use for communicating between the processes.
+
+## Use
+
 In your crontab, add the following line:
 
     * * * * * python /path/to/package/debug_cron_server.py
